@@ -1,0 +1,19 @@
+{
+  "name": "ledgerserver",
+  "version": "1.0.0",
+  "description": "Envokes hledger with csv output and parses as array",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.1",
+    "csv-parse": "^1.2.0",
+    "express": "^4.15.2",
+    "method-override": "^2.3.8",
+    "ramda": "^0.23.0"
+  }
+}
