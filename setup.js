@@ -22,12 +22,14 @@ const init = router => {
     return exec(command).then( result => {
       return csvParser(result);
     }).then( data => {
+      /*
       const header = R.head(data);
       const json = R.compose(
         R.map(R.zipObj(header)),
         R.tail
       )(data);
-      res.json(json);
+      */
+      res.json(data);
     }).catch( e => {
       res.json({message: e.message});
     });

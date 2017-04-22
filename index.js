@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
+const cors = require('cors');
 
 const setup = require('./setup.js');
 
@@ -9,6 +10,11 @@ const router = express.Router()
 
 app.use(bodyParser.json());
 app.use(methodOverride());
+
+app.use(cors({
+  credentials: false,
+  exposedHeaders: 'X-Total-Count'
+}));
 
 setup.init(router);
 
