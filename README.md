@@ -35,7 +35,11 @@ This isn't secure as people could put malicous stuff in cmd.  But it's useful if
 In `/app` there is a small React front end.  You can tell it
 what command you want hledger to execute and it'll make a bar
 chart for the balance command and a line graph for the register
-command. 
+command.  It'll also display a table for the data. 
+
+Also the server alerts the client when the journal file has
+changed via websockets.  The client then makes another request
+to the server to get updated data.
 
 My plan is to have server also serve this, but I haven't gotten
 around to it yet.  You have to cd into the `/app` folder and run 
