@@ -30,5 +30,17 @@ It will then execute this command `hledger -f ${file} ${cmd} -O csv` and turn th
 
 This isn't secure as people could put malicous stuff in cmd.  But it's useful if your server is bound to localhost and you want to experiment.
 
-My plan is to write a React front end to dispaly some nice tables and charts with the data.
+## Front end
+
+In `/app` there is a small React front end.  You can tell it
+what command you want hledger to execute and it'll make a bar
+chart for the balance command and a line graph for the register
+command. 
+
+My plan is to have server also serve this, but I haven't gotten
+around to it yet.  You have to cd into the `/app` folder and run 
+`npm install` then `npm start`.
+
+Happy hacking!
+
 
