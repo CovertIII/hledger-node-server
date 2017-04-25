@@ -5,6 +5,13 @@ import R from 'ramda';
 import numeral from 'numeral';
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
 
+const socket = new WebSocket("ws://0.0.0.0:8081");
+
+socket.onopen = function (event) {
+  socket.send("I'm connecting!"); 
+};
+
+
 const api = axios.create({
   baseURL: 'http://0.0.0.0:3000/api',
   timeout: 1000
@@ -15,19 +22,36 @@ class App extends Component {
   constructor() {
     super();
 
+    const lastCommand = localStorage.lastCommand;
+
     this.state = {
       data: [],
       formatedData: [],
       tree: [],
-      command: ''
+      command: lastCommand || ''
     };
+
+    if(lastCommand){
+      setTimeout( () => this.go(), 500);
+    }
+
+    socket.onmessage = (event) => {
+      console.log(event.data);
+      if(event.data === 'fileChanged' && this.state.command){
+        this.go();
+      }
+    }
+
 
     this.handleChange = this.handleChange.bind(this);
     this.go = this.go.bind(this);
   }
 
   go(e){
-    e.preventDefault();
+    if(e){
+      e.preventDefault();
+    }
+    localStorage.lastCommand = this.state.command;
     api.post('', {
       cmd: this.state.command
     }).then( ({data}) => {
@@ -69,6 +93,7 @@ class App extends Component {
         buttonLabel="Search"
         label="InlineForm"
         name="inline_form"
+        value={this.state.command}
         onChange={this.handleChange}
         onClick={this.go}
         />

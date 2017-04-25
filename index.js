@@ -18,6 +18,7 @@ app.use(cors({
 
 setup.init(router);
 
+
 app.use(router)
 
 app.listen(3000, () => {
