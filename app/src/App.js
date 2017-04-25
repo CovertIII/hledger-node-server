@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { InlineForm, Table, Heading } from 'rebass';
+import { InlineForm, Heading } from 'rebass';
 import R from 'ramda';
 import numeral from 'numeral';
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
+import Display from './Display';
 
 const socket = new WebSocket("ws://0.0.0.0:8081");
 
@@ -61,12 +61,15 @@ class App extends Component {
         R.tail,
         R.map(R.compose(
           R.zipObj(header),
-          R.map(number => {
-            const n = numeral(number).value();
-            if(!n || isNaN(n) ){
-              return number;
+          R.addIndex(R.map)((number, i) => {
+            if(['balance', 'total', 'amount'].some(R.equals(header[i]))){
+              const n = numeral(number).value();
+              if(!n || isNaN(n) ){
+                return number;
+              }
+              return n;
             }
-            return n;
+            return number;
           })
         )),
         R.tail
@@ -87,30 +90,21 @@ class App extends Component {
     return (
       <div>
         <Heading level={1}>
-         HLedger React Web
+          HLedger React Web
         </Heading>
         <InlineForm
-        buttonLabel="Search"
-        label="InlineForm"
-        name="inline_form"
-        value={this.state.command}
-        onChange={this.handleChange}
-        onClick={this.go}
+          buttonLabel="Search"
+          label="InlineForm"
+          name="inline_form"
+          value={this.state.command}
+          onChange={this.handleChange}
+          onClick={this.go}
         />
         <br/><br/>
-        <LineChart width={1000} height={500} data={this.state.formatedData}
-              margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-         <XAxis dataKey="date"/>
-         <YAxis/>
-         <CartesianGrid strokeDasharray="3 3"/>
-         <Tooltip/>
-         <Legend />
-         <Line type="monotone" dataKey="total" stroke="#82ca9d" />
-        </LineChart>
-      <br/><br/>
-        <Table 
-          data={R.tail(this.state.data)}
-          headings={R.head(this.state.data)}
+        <Display 
+          data={this.state.data}
+          formatedData={this.state.formatedData}
+          command={this.state.command}
         />
       </div>
     );
