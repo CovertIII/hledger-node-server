@@ -1,6 +1,5 @@
 import React from 'react';
 import R from 'ramda';
-import { Table } from 'rebass';
 import {BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
 
 const registerGraph = (formatedData) => (
@@ -36,14 +35,53 @@ const displayChart = (command, formatedData) => {
   }
 };
 
-export default ({data, command, formatedData}) => (
+const defaultArray = [];
+
+const thStyle = {
+  'textAlign': 'left',
+  'verticalAlign': 'bottom',
+  'padding': '8px 8px 8px 0px',
+  'borderBottomStyle': 'solid',
+  'borderBottomWidth': '2px',
+  'borderColor': 'inherit'
+};
+
+const Header = ({header = defaultArray}) => (
+  <thead>
+    <tr>
+      { header.map( h => <th style={thStyle}>{ h }</th> ) }
+    </tr>
+  </thead>
+);
+
+const Body = ({data = defaultArray, go}) => (
+  <tbody>
+    { data.map( (d = defaultArray) => (
+      <tr>
+        { d.map( (h, i) =>
+          <td onClick={() => go(`register '${h}'`)}>{ h }</td>
+        )}
+      </tr>
+    ))}
+  </tbody>
+)
+
+const tableStyle = {
+  fontSize: '14px',
+  lineHeight: '1.25',
+  borderCollapse: 'separate',
+  borderSpacing: '0px',
+  width: '100%'
+};
+
+export default ({data = defaultArray, command, formatedData, go}) => (
   <div>
     { displayChart(command, formatedData) }
     <br/><br/>
-    <Table 
-      data={R.tail(data)}
-      headings={R.head(data)}
-    />
+    <table style={tableStyle}>
+      <Header header={R.head(data)}/>
+      <Body data={R.tail(data)} go={go}/>
+    </table>
   </div>
 );
 

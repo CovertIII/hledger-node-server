@@ -30,6 +30,19 @@ wss.on('connection', (ws) => {
   ws.send('something');
 });
 
+/* 
+ * Probably should use something like this
+ * to be more secure
+const execFile = require('child_process').execFile;
+const child = execFile('node', ['--version'], (error, stdout, stderr) => {
+    if (error) {
+        console.error('stderr', stderr);
+        throw error;
+    }
+    console.log('stdout', stdout);
+});
+*/
+
 
 const init = router => {
   router.get('/api', (req, res) => {

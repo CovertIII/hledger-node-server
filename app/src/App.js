@@ -8,7 +8,7 @@ import Display from './Display';
 const socket = new WebSocket("ws://0.0.0.0:8081");
 
 socket.onopen = function (event) {
-  socket.send("I'm connecting!"); 
+  socket.send("I'm connecting!");
 };
 
 
@@ -28,7 +28,8 @@ class App extends Component {
       data: [],
       formatedData: [],
       tree: [],
-      command: lastCommand || ''
+      command: lastCommand || '',
+      commandHistory: []
     };
 
     if(lastCommand){
@@ -51,9 +52,25 @@ class App extends Component {
     if(e){
       e.preventDefault();
     }
+    this.getData(this.state.command)
+  }
+
+  getData(command, ignoreHistory){
+    const commandHistory = this.state.commandHistory.concat([command]);
     localStorage.lastCommand = this.state.command;
+    if(!ignoreHistory){
+      localStorage.commandHistory = JSON.stringify(commandHistory);
+      this.setState({
+        commandHistory,
+        command
+      });
+    }else{
+      this.setState({
+        command
+      });
+    }
     api.post('', {
-      cmd: this.state.command
+      cmd: command
     }).then( ({data}) => {
       const header = R.head(data);
       const json = R.compose(
@@ -82,6 +99,14 @@ class App extends Component {
     });
   }
 
+  back(){
+    const lastCommand = R.head(R.takeLast(2, this.state.commandHistory));
+    this.setState({
+      commandHistory: R.dropLast(1, this.state.commandHistory)
+    });
+    this.getData(lastCommand, true);
+  }
+
   handleChange(event) {
     this.setState({command: event.target.value});
   }
@@ -100,11 +125,13 @@ class App extends Component {
           onChange={this.handleChange}
           onClick={this.go}
         />
+        <button onClick={() => this.back()}>Back</button>
         <br/><br/>
-        <Display 
+        <Display
           data={this.state.data}
           formatedData={this.state.formatedData}
           command={this.state.command}
+          go={cmd => this.getData(cmd)}
         />
       </div>
     );
