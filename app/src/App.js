@@ -29,7 +29,9 @@ class App extends Component {
       formatedData: [],
       tree: [],
       command: lastCommand || '',
-      commandHistory: []
+      submittedCommand: lastCommand || '',
+      commandHistory: [],
+      loading: false
     };
 
     if(lastCommand){
@@ -62,11 +64,13 @@ class App extends Component {
       localStorage.commandHistory = JSON.stringify(commandHistory);
       this.setState({
         commandHistory,
-        command
+        command,
+        loading: true
       });
     }else{
       this.setState({
-        command
+        command,
+        loading: true
       });
     }
     api.post('', {
@@ -94,7 +98,16 @@ class App extends Component {
 
       this.setState({
         data,
-        formatedData: json
+        formatedData: json,
+        submittedCommand: command,
+        loading: false
+      });
+    }).catch( (e) => {
+      console.error("error", e);
+      this.setState({
+        submittedCommand: "error",
+        data: [ ['Error Loading Data'], [e.message] ],
+        loading: false
       });
     });
   }
@@ -127,10 +140,11 @@ class App extends Component {
         />
         <button onClick={() => this.back()}>Back</button>
         <br/><br/>
+        { this.state.loading && <span>Loading...</span> }
         <Display
           data={this.state.data}
           formatedData={this.state.formatedData}
-          command={this.state.command}
+          command={this.state.submittedCommand}
           go={cmd => this.getData(cmd)}
         />
       </div>
